@@ -1,0 +1,88 @@
+# creazione tabella Dipendente
+create table Dipendente(
+  id_dipendente varchar(20) PRIMARY KEY, 
+  nome TEXT, 
+  cognome TEXT, 
+  email varchar(50), 
+  numerotelefono integer, 
+  data_assunzione date , 
+  id_lavoro varchar(55) UNIQUE, 
+  salario decimal(10,2), 
+  id_manager varchar(55) UNIQUE, 
+  id_dipartimento varchar(55)); 
+
+
+#creazione tabella Dipartimento 
+create table Dipartimento(
+  id_dipartimento varchar(55) PRIMARY KEY, 
+  nome_dip TEXT, 
+  id_manager varchar(55) UNIQUE, 
+  id_location varchar(55) UNIQUE); 
+
+
+-- Valori tabella dipendente
+
+INSERT INTO Dipendente (id_dipendente, nome, cognome, email, numerotelefono, data_assunzione, id_lavoro, salario, id_manager, id_dipartimento)
+VALUES 
+("DIP1007", "Mario", "Caruso", "Caruso@gmail.com", 320450893, "2015-11-20", "IDL202", 3000.25, NULL, "IDD28"),
+("DIP1008", "Luigi", "Rossi", "Luigi@gmail.com", 320450894, "2013-12-15", "IDL203", 4000.75, "IDM319", "IDD29"),
+("DIP1009", "Giovanna", "Bianchi", "Giovanna@gmail.com", 320450895, "2014-10-10", "IDL204", 3500.50, "IDM320", "IDD30"),
+("DIP1010", "Giorgio", "Russo", "Giorgio@gmail.com", 320450898, "2022-06-15", "IDL206", 2200.75, "IDM321", "IDD31"),
+
+("DIP1011", "Elena", "Martini", "Elena@gmail.com", 320450899, "2022-06-20", "IDL207", 1900.25, null, "IDD28"),
+("DIP1012", "Alessio", "Ferrari", "Alessio@gmail.com", 320450900, "2022-06-25", "IDL208", 2050.50, null, "IDD29"),
+("DIP1013", "Roberta", "Lombardi", "Roberta@gmail.com", 320450901, "2022-06-30", "IDL209", 1980.00, null, "IDD30"),
+("DIP1014", "Marco", "Fabbri", "Marco@gmail.com", 320450902, "2020-01-10", "IDL210", 1800.00, null, "IDD31"),
+
+("DIP1015", "Simona", "Marchesi", "Simona@gmail.com", 320450903, "2022-02-15", "IDL211", 2400, "IDM318", "IDD28"),
+("DIP1016", "Giacomo", "Conti", "Giacomo@gmail.com", 320450904, "2022-03-20", "IDL212", 2100.25, null, "IDD29"),
+("DIP1017", "Paola", "Moretti", "Paola@gmail.com", 320450905, "2015-04-25", "IDL213", 1900.50, null, "IDD30"),
+("DIP1018", "Martina", "Galli", "Martina@gmail.com", 320450914, "2022-07-05", "IDL222", 2100.75, null, "IDD31"),
+
+("DIP1019", "Lorenzo", "Villa", "Lorenzo@gmail.com", 320450915, "2022-07-10", "IDL223", 1980.25, null, "IDD28"),
+("DIP1020", "Gabriella", "Pozzi", "Gabriella@gmail.com", 320450916, "2022-07-15", "IDL224", 2150.50, null, "IDD29"),
+("DIP1021", "Fabio", "Gatti", "Fabio@gmail.com", 320450917, "2022-07-20", "IDL225", 1900.00, null, "IDD30"),
+("DIP1022", "Serena", "Rinaldi", "Serena@gmail.com", 320450918, "2022-07-25", "IDL226", 2050.75, null, "IDD31"),
+("DIP1023", "Luca", "Marconi", "Luca@gmail.com", 320450919, "2015-07-30", "IDL227", 2200.25, null, "IDD28");
+
+
+-- valori tabella dipartimento
+
+-- valori tabella dipartimento
+INSERT INTO Dipartimento (id_dipartimento, nome_dip, id_manager, id_location)
+VALUES 
+("IDD28", "Risorse Umane", "IDM318", "IDL1111"),
+("IDD29", "Finanze", "IDM319", "IDL2222"),
+("IDD30", "Amministrazione", "IDM320", "IDL3333"),
+("IDD31", "Logistica", "IDM321", "IDL4444");
+
+
+#Visualizzare la data di assunzione dei manager e
+#i loro id appartenenti al dipartimento ’Amministrazione’ nel formato Nome mese, giorno, anno
+
+SELECT DATE_FORMAT(d1.data_assunzione,'%M/%d/%Y') as data_assunzione_form, d2.id_dipartimento 
+FROM Dipendente d1
+JOIN Dipartimento d2 ON d1.id_dipartimento = d2.id_dipartimento
+WHERE nome_dip = 'Amministrazione';
+
+#Visualizzare il nome e il cognome dei dipendenti assunti nel mese di Giugno
+
+SELECT nome, cognome
+FROM Dipendente
+WHERE MONTH (data_assunzione) = 6;
+
+#Visualizzare gli anni in cui più di 10 dipendenti sono stati assunti
+
+SELECT YEAR(data_assunzione) as anno_ass, count(id_dipendente) as num_dip
+FROM Dipendente
+GROUP BY anno_ass
+HAVING num_dip > 10;
+
+#Visualizzare il nome del dipartimento, il nome del manager, 
+#il salario del manager di tutti i manager la cui esperienza è maggiore di 5 anni
+
+SELECT d2.nome_dip, d1.nome, d1.salario
+FROM Dipendente d1
+JOIN Dipartimento d2 ON d1.id_dipartimento = d2.id_dipartimento
+WHERE d1.id_manager IS NOT NULL 
+    AND YEAR (CURRENT_DATE()) - YEAR(d1.data_assunzione) > 5;
